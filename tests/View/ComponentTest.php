@@ -183,6 +183,30 @@ class ComponentTest extends TestCase
         $this->assertSame('foo', $component->render());
     }
 
+    public function testResolveDependenciesWithKebabCase()
+    {
+        $component = new class extends Component
+        {
+            public $camelCase;
+
+            public function __construct($camelCase = null)
+            {
+                $this->camelCase = $camelCase;
+            }
+
+            public function render()
+            {
+                return $this->camelCase;
+            }
+        };
+
+        $component = $component::resolve(['camelCase' => 'a']);
+        $this->assertSame('a', $component->render());
+
+        $component = $component::resolve(['camel-case' => 'b']);
+        $this->assertSame('b', $component->render());
+    }
+
     public function testResolveComponentsUsing()
     {
         $component = new TestInlineViewComponent;
